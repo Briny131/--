@@ -69,4 +69,4 @@ function change(tree){
     }
 }
 ```
-
+![效果图](https://github.com/Briny131/dom-drag/2018-12-14_170235.png)
