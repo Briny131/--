@@ -70,4 +70,4 @@ function change(tree){
 }
 ```
 ![效果图](https://raw.githubusercontent.com/Briny131/dom-drag/master/2018-12-14_170235.png)
-![git]()
+![git](https://raw.githubusercontent.com/Briny131/dom-drag/master/demo.gif)
