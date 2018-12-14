@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+    <title>拖拽</title>
+</head>
+<body>
+    <div style="position:absolute;right:0;bottom:0;background:yellow;border:1px solid black;width:30px;height:30px" id='add'></div>
+    <div id="anima" style="position:absolute;right:7px;bottom:35px;border-right:5px solid;border-bottom:5px solid;transform:rotate(45deg);width:14px;height:14px"></div>
+<script>
+    function Tuo(){
+        this.children=[]
+        this.pos=[]
+        this.ele=''
+    }
+    var anima=document.getElementById('anima'),flag=true,bot=35
+    setInterval(()=>{
+        flag?anima.style.bottom=bot+++'px':anima.style.bottom=bot--+'px'
+        bot==35?flag=true:bot==60?flag=false:''
+
+    },1000/60)
+    function Insert(tree,str,L,T){
+        if(tree.children.length==0){
+            str.ele.remove()
+            str.ele.style.width=str.ele.style.height='50%'
+            str.ele.style.position=''
+            del(template,str)
+            tree.children.push(str)
+            tree.ele.append(str.ele)
+            str.pos=[str.ele.getBoundingClientRect().top,str.ele.getBoundingClientRect().top+str.ele.offsetHeight,str.ele.getBoundingClientRect().left,str.ele.getBoundingClientRect().left+str.ele.offsetLeft+str.ele.offsetWidth]
+        }else{
+            let j=1
+            for(let i of tree.children){
+                if(L>i.pos[2]&&L<i.pos[3]&&T>i.pos[0]&&T<i.pos[1]){
+                    Insert(i,str,L,T)
+                    j=0
+                    break;
+                }
+            }
+            if(j){
+                str.ele.remove()
+                str.ele.style.width=str.ele.style.height='50%'
+                str.ele.style.position=''
+                del(template,str)
+                tree.children.push(str)
+                tree.ele.append(str.ele)
+                str.pos=[str.ele.getBoundingClientRect().top,str.ele.getBoundingClientRect().top+str.ele.offsetHeight,str.ele.getBoundingClientRect().left,str.ele.getBoundingClientRect().left+str.ele.offsetLeft+str.ele.offsetWidth]
+            }
+        }
+    }
+    function del(tree,ele){
+        for(let i in tree){
+            if(tree[i].ele.dataset.num==ele.ele.dataset.num){
+                tree.splice(i,1)
+            }else if(tree[i].children.length!=0){
+                del(tree[i].children,ele)
+            }
+        }
+    }
+    var relationship,template=[],numm=0
+    document.getElementById('add').onclick=e=>{
+        var color=`(${Math.random()*256},${Math.random()*256},${Math.random()*256},0.5)`
+        var str={
+            ele:$(`<div class="Ele" data-num="${numm++}" style="width:400px;height:400px;background:rgba${color};position:absolute;float:left"></div>`)[0],
+            pos:[],
+            children:[],
+            num:numm
+        }
+
+        template.push(str)
+
+        document.getElementsByTagName('body')[0].append(str.ele)
+        function add(e){
+            e.stopPropagation()
+            let L=e.clientX,T=e.clientY
+            str.ele.style.top=T-200+'px'
+            str.ele.style.left=L-200+'px'
+            str.pos=[+(str.ele.style.top.slice(0,str.ele.style.top.length-2)),+(str.ele.style.top.slice(0,str.ele.style.top.length-2))+400,+(str.ele.style.left.slice(0,str.ele.style.left.length-2)),+(str.ele.style.left.slice(0,str.ele.style.left.length-2))+400]
+            
+        }
+        str.ele.onmousedown=function(e){
+            e.stopPropagation()
+            str.ele.remove()
+            del(template,str)
+            // if(!template.length)
+                template.push(str)
+            document.getElementsByTagName('body')[0].append(str.ele)
+            str.ele.style.position='absolute'
+            str.ele.style.width=str.ele.style.height='400px'
+            str.ele.style['z-index']=1000
+            // del(template,str)
+            
+            this.onmousemove=add
+        }
+
+        str.ele.onmouseup=function(e){
+            e.stopPropagation()
+            let L=e.clientX,T=e.clientY
+            for(let i of template){
+                if(i.ele.dataset.num==str.ele.dataset.num) break;
+                if(L>i.pos[2]&&L<i.pos[3]&&T>i.pos[0]&&T<i.pos[1]){
+                    Insert(i,str,L,T)
+                }
+                // else{
+                //     if(template.indexOf(str)==-1){
+                //         template.push(str)
+                //         break
+                //     }
+                    
+                // }
+            }
+            str.ele.style['z-index']=''
+            change(template)
+            this.onmousemove=''
+        }
+        function change(tree){
+            for(let i of tree){
+                i.pos=i.pos=[i.ele.getBoundingClientRect().top,i.ele.getBoundingClientRect().top+i.ele.offsetHeight,i.ele.getBoundingClientRect().left,i.ele.getBoundingClientRect().left+i.ele.offsetLeft+i.ele.offsetWidth]
+                if(i.children.length){
+                    change(i.children)
+                }
+            }
+        }
+    }
+</script>   
+</body>
+</html>
