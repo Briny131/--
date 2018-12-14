@@ -90,6 +90,8 @@
             document.getElementsByTagName('body')[0].append(str.ele)
             str.ele.style.position='absolute'
             str.ele.style.width=str.ele.style.height='400px'
+            str.ele.style.top=str.pos[0]+'px'
+            str.ele.style.left=str.pos[2]+'px'
             str.ele.style['z-index']=1000
             // del(template,str)
             
@@ -118,7 +120,7 @@
         }
         function change(tree){
             for(let i of tree){
-                i.pos=i.pos=[i.ele.getBoundingClientRect().top,i.ele.getBoundingClientRect().top+i.ele.offsetHeight,i.ele.getBoundingClientRect().left,i.ele.getBoundingClientRect().left+i.ele.offsetLeft+i.ele.offsetWidth]
+                i.pos=i.pos=[i.ele.getBoundingClientRect().top,i.ele.getBoundingClientRect().top+i.ele.offsetHeight,i.ele.getBoundingClientRect().left,i.ele.getBoundingClientRect().left+i.ele.offsetWidth]
                 if(i.children.length){
                     change(i.children)
                 }
